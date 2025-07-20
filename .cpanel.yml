@@ -1,0 +1,8 @@
+---
+  deployment:
+    tasks:
+      - export DEPLOYPATH=/home/diremidloreto/public_html/soporte.diremidloreto.com/
+      - /bin/rsync -av public/ $DEPLOYPATH
+      - export DEPLOYPATH=/home/diremidloreto/web_soporte/
+      - /bin/rsync -av ./ $DEPLOYPATH
+
