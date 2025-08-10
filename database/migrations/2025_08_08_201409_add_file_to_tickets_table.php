@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-              $table->tinyInteger('is_admin')->default(0)->comment('0=Regular, 1=Admin, 2=Support');
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->string('file')->nullable()->after('response');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->dropColumn('file');
         });
     }
 };

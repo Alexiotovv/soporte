@@ -4,7 +4,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use \App\Http\Controllers\Admin\OfficeController;
 // Authentication Routes...
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -25,7 +25,6 @@ Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController
 // })->middleware(['auth', 'is_admin']);
 
 
-
 Route::middleware(['auth'])->group(function () {
     // Tickets routes
     Route::resource('tickets', TicketController::class);
@@ -40,6 +39,15 @@ Route::middleware(['auth'])->group(function () {
             'edit'    => 'admin.users.edit',
             'update'  => 'admin.users.update',
             'destroy' => 'admin.users.destroy',
+        ]);
+        Route::resource('offices', OfficeController::class)->names([
+            'index' => 'admin.offices.index',
+            'create' => 'admin.offices.create',
+            'store' => 'admin.offices.store',
+            'show' => 'admin.offices.show',
+            'edit' => 'admin.offices.edit',
+            'update' => 'admin.offices.update',
+            'destroy' => 'admin.offices.destroy'
         ]);
     });
 });

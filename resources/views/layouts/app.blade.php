@@ -11,7 +11,8 @@
     
     <!-- Font Awesome CDN para íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- DataTables + Bootstrap 5 -->
+    <link href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <!-- Estilos personalizados (si tienes alguno) -->
     <style>
         body {
@@ -49,12 +50,20 @@
                 <ul class="navbar-nav me-auto">
                     @auth
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('tickets.index') }}">My Tickets</a>
+                        <a class="nav-link" href="{{ route('tickets.index') }}">Mis Tickets</a>
                     </li>
-                    @if(auth()->user()->is_admin)
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.users.index') }}">Users</a>
-                    </li>
+                    @if(auth()->user()->is_admin==1)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.offices.index') }}">Oficinas</a>
+                        </li>
+                    @elseif(auth()->user()->is_admin==2)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.offices.index') }}">Oficinas</a>
+                        </li>
+                    
                     @endif
                     @endauth
                 </ul>
@@ -66,7 +75,7 @@
                     </li>
                     @if (Route::has('register'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">Register</a>
+                        <a class="nav-link" href="{{ route('register') }}">Registro</a>
                     </li>
                     @endif
                     @else
@@ -122,7 +131,10 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
         });
     </script>
-    
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+
     @yield('scripts')
 </body>
 </html>

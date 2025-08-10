@@ -8,7 +8,7 @@
                 <div class="card-header">
                     Ticket #{{ $ticket->id }}
                     <span class="float-right">
-                        <span class="badge badge-{{ $ticket->status == 'open' ? 'success' : ($ticket->status == 'in_progress' ? 'warning' : 'secondary') }}">
+                        <span class="badge bg-{{ $ticket->status == 'open' ? 'warning' : ($ticket->status == 'in_progress' ? 'primary' : 'secondary') }}">
                             {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                         </span>
                     </span>
@@ -19,26 +19,31 @@
                     <p class="card-text">{{ $ticket->description }}</p>
                     
                     <div class="mb-3">
-                        <strong>Priority:</strong>
-                        <span class="badge badge-{{ $ticket->priority == 'high' ? 'danger' : ($ticket->priority == 'medium' ? 'warning' : 'info') }}">
+                        <strong>Prioridad:</strong>
+                        <span class="badge bg-{{ $ticket->priority == 'high' ? 'danger' : ($ticket->priority == 'medium' ? 'warning' : 'info') }}">
                             {{ ucfirst($ticket->priority) }}
                         </span>
-                    </div>
-                    
+                    </div>                    
                     <div class="mb-3">
-                        <strong>Created by:</strong> {{ $ticket->user->name }}
+                        <strong>Fecha Solicitud:</strong> {{ $ticket->formatted_date }} hrs.
+                    </div>
+                    <div class="mb-3">
+                        <strong>Tiempo Transcurrido:</strong> {{ $ticket->elapsed_time }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Creado por:</strong> {{ $ticket->user->name }}
                     </div>
                     
                     @if($ticket->assignedTo)
                     <div class="mb-3">
-                        <strong>Assigned to:</strong> {{ $ticket->assignedTo->name }}
+                        <strong>Asignado a:</strong> {{ $ticket->assignedTo->name }}
                     </div>
                     @endif
                     
                     @if($ticket->response)
                     <div class="card mt-4">
                         <div class="card-header bg-light">
-                            <strong>Response from support:</strong>
+                            <strong>Respuesta del Soporte:</strong>
                         </div>
                         <div class="card-body">
                             <p>{{ $ticket->response }}</p>
@@ -47,9 +52,9 @@
                     @endif
                     
                     <div class="mt-4">
-                        <a href="{{ route('tickets.index') }}" class="btn btn-secondary">Back to list</a>
+                        <a href="{{ route('tickets.index') }}" class="btn btn-light btn-sm">⬅️ Regresar a lista</a>
                         @can('update', $ticket)
-                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-primary">Edit</a>
+                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-light btn-sm">✏️ Edit</a>
                         @endcan
                     </div>
                 </div>

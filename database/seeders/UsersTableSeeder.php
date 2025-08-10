@@ -12,15 +12,15 @@ class UsersTableSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'email' => 'admin@diremid.com',
+            'password' => Hash::make('#1984332Anvfdcs'),
             'is_admin' => true,
         ]);
 
         User::create([
             'name' => 'Regular User',
-            'email' => 'user@example.com',
-            'password' => Hash::make('password'),
+            'email' => 'user@diremid.com',
+            'password' => Hash::make('#$asdf###'),
             'is_admin' => false,
         ]);
     }

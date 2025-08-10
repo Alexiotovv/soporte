@@ -16,6 +16,8 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'phone',
+        'office_id'
     ];
 
     protected $hidden = [
@@ -25,7 +27,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'is_admin' => 'boolean',
+        'is_admin' => 'integer',
     ];
 
     public function tickets()
@@ -36,5 +38,10 @@ class User extends Authenticatable
     public function assignedTickets()
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
     }
 }

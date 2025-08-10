@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-              $table->tinyInteger('is_admin')->default(0)->comment('0=Regular, 1=Admin, 2=Support');
+            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('set null');
+            $table->string('phone')->nullable();
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropForeign(['office_id']);
+            $table->dropColumn(['office_id', 'phone']);
         });
     }
 };
