@@ -104,7 +104,7 @@ class TicketController extends Controller
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'priority' => 'required|in:low,medium,high',
-                'status' => 'required|in:open,in_progress,closed',
+                'status' => 'nullable|in:open,in_progress,closed',
                 'assigned_to' => 'nullable|exists:users,id',
                 'response' => 'nullable|string',
             ];
