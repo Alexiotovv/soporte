@@ -56,11 +56,13 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ trans('validation.attributes.Login')}}
                                 </button>
-
-                                {{-- @if (Route::has('password.request'))
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    {{ __('Forgot Your Password?') }}
+                                <a class="btn btn-link" href="{{ route('public.register.form') }}">
+                                        Regístrate
                                 </a>
+                                {{-- @if (Route::has('password.request'))
+                                    <a class="btn btn-link" href="{{ route('password.request') }}">
+                                        {{ __('Forgot Your Password?') }}
+                                    </a>
                                 @endif --}}
                             </div>
                         </div>

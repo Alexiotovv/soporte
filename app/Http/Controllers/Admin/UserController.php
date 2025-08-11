@@ -32,7 +32,8 @@ class UserController extends Controller
             'password' => 'required|string|min:5|confirmed',
             'role' => 'required|in:0,1,2', 
             'phone' => 'nullable|string|max:20', // Validación para teléfono
-            'office_id' => 'nullable|exists:offices,id' // Validación para oficina
+            'office_id' => 'nullable|exists:offices,id', // Validación para oficina
+            'status'=>'required|in:0,1'
         ]);
         User::create([
             'name' => $request->name,
@@ -40,10 +41,11 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'is_admin' => $request->role,
             'phone' => $request->phone,
-            'office_id' => $request->office_id
+            'office_id' => $request->office_id,
+            'status'=> $request->status
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'Usuario creado correctamente.');
     }
 
     public function edit(User $user)
@@ -61,7 +63,8 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:0,1,2',
             'phone' => 'nullable|string|max:20', // Validación para teléfono
-            'office_id' => 'nullable|exists:offices,id' // Validación para oficina
+            'office_id' => 'nullable|exists:offices,id', // Validación para oficina
+            'status'=>'required|in:0,1'
         ]);
 
         $data = [
@@ -69,7 +72,8 @@ class UserController extends Controller
             'email' => $request->email,
             'is_admin' => $request->role,
             'phone' => $request->phone,
-            'office_id' => $request->office_id
+            'office_id' => $request->office_id,
+            'status' => $request->status,
         ];
 
         if ($request->password) {

@@ -75,7 +75,7 @@
                     </li>
                     @if (Route::has('register'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">Registro</a>
+                        <a class="nav-link" href="{{ route('public.register.form') }}">Registro</a>
                     </li>
                     @endif
                     @else
@@ -88,7 +88,7 @@
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
-                                Logout
+                                Cerrar Sesión
                             </a>
 
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

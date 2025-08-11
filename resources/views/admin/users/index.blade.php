@@ -22,6 +22,7 @@
                         <th>Teléfono</th>
                         <th>Oficina</th>
                         <th>Rol</th>
+                        <th>Status</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -40,6 +41,13 @@
                                 <span class="badge bg-light text-dark">Support Team</span>
                             @else
                                 <span class="badge bg-light text-dark">Regular User</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($user->status == 1)
+                                <span class="badge bg-success">Activo</span>
+                            @else
+                                <span class="badge bg-secondary">Inhabilitado</span>
                             @endif
                         </td>
                         <td>

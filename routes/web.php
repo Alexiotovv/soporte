@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\OfficeController;
+use App\Http\Controllers\Admin\PublicRegisterController;
 // Authentication Routes...
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -20,9 +21,9 @@ Route::post('password/email', [App\Http\Controllers\Auth\ForgotPasswordControlle
 Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 
-// Route::get('/check-admin', function () {
-//     return 'Eres admin';
-// })->middleware(['auth', 'is_admin']);
+//Registro Público
+Route::get('/registro', [PublicRegisterController::class, 'showForm'])->name('public.register.form');
+Route::post('/registro', [PublicRegisterController::class, 'register'])->name('public.register');
 
 
 Route::middleware(['auth'])->group(function () {

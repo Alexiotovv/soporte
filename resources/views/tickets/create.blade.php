@@ -24,9 +24,9 @@
                         <div class="form-group">
                             <label for="priority">Prioridad</label>
                             <select class="form-control @error('priority') is-invalid @enderror" id="priority" name="priority" required>
-                                <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>Bajo</option>
-                                <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>Medio</option>
-                                <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>Alto</option>
+                                <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>🔵 Bajo</option>
+                                <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>🟡 Medio</option>
+                                <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>🔴 Alto</option>
                             </select>
                             @error('priority')
                                 <span class="invalid-feedback" role="alert">
@@ -46,7 +46,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="file">Archivo adjunto</label>
+                            <label for="file">Archivo adjunto <small>(Opcional)</small></label>
                             <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
                             <small class="form-text text-muted">
                                 Formatos permitidos: JPG, PNG, JPEG. Tamaño máximo: 5MB

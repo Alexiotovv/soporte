@@ -79,7 +79,7 @@
 
                         <div class="form-group">
                             <label for="role">User Role</label>
-                            <select class="form-control @error('role') is-invalid @enderror" id="role" name="role" required>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
                                 <option value="0" {{ old('role') == 0 ? 'selected' : '' }}>Regular User</option>
                                 <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Support Team</option>
                                 <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Administrator</option>
@@ -90,7 +90,18 @@
                                 </span>
                             @enderror
                         </div>
-
+                        <div class="form-group">
+                            <label for="role">Status</label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Inhabilitado</option>
+                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Activo</option>
+                            </select>
+                            @error('status')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         <br>
                         <a href="{{ route('admin.users.index') }}" class="btn btn-light btn-sm">⬅️ Regresar a lista </a>
                         <button type="submit" class="btn btn-light btn-sm">➕ Crear Usuario</button>
