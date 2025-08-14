@@ -32,6 +32,7 @@
         </a>
     </div>
 
+    <div id="sse-data" style="font-family: monospace; margin: 20px;"></div>
 
 
     <div class="card">
@@ -93,9 +94,11 @@
                         </td>
                         <td>
                             <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-sm btn-light">📋 View</a>
-                            @can('update', $ticket)
-                            <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-light">✏️ Edit</a>
-                            @endcan
+                            
+                            @if(auth()->user()->is_admin)
+                                <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-light">✏️ Edit</a>
+                            @endif
+
                             @can('delete', $ticket)
                             <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" style="display: inline;">
                                 @csrf
@@ -114,6 +117,32 @@
 @endsection
 
 @section('scripts')
+    {{-- <script>
+        $(document).ready(function() {
+
+            let ultimoTicketId = null;
+
+            function verificarTickets() {
+                $.get('/ticketes/ultimo', function(data) {
+                    if (data) {
+                        if (ultimoTicketId === null) {
+                            // Primera vez que carga
+                            ultimoTicketId = data.id;
+                        } else if (data.id !== ultimoTicketId) {
+                            // Hay un nuevo ticket
+                            ultimoTicketId = data.id;
+                            alert('¡Nuevo ticket abierto! #' + data.id);
+                        }
+                    }
+                });
+            }
+
+            // Ejecutar cada 10 segundos
+            setInterval(verificarTickets, 10000);
+
+        });
+    </script> --}}
+
    <script>
         $(document).ready(function () {
             $('#tickets').DataTable({

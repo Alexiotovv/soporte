@@ -66,7 +66,7 @@
                             <select class="form-control @error('assigned_to') is-invalid @enderror" id="assigned_to" name="assigned_to">
                                 <option value="">Unassigned</option>
                                 @foreach($staff as $user)
-                                <option value="{{ $user->id }}" {{ old('assigned_to', $ticket->assigned_to) == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                    <option value="{{ $user->id }}" {{ old('assigned_to', $ticket->assigned_to) == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                                 @endforeach
                             </select>
                             @error('assigned_to')
@@ -76,15 +76,6 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="response">Respuesta</label>
-                            <textarea class="form-control @error('response') is-invalid @enderror" id="response" name="response" rows="5">{{ old('response', $ticket->response) }}</textarea>
-                            @error('response')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
                         @endif
 
                         <div class="form-group">

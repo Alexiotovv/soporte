@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('description');
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+            $table->string('file')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
-            $table->text('response')->nullable();
             $table->timestamps();
         });
     }

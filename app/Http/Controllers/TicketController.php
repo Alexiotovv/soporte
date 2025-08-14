@@ -106,7 +106,6 @@ class TicketController extends Controller
                 'priority' => 'required|in:low,medium,high',
                 'status' => 'nullable|in:open,in_progress,closed',
                 'assigned_to' => 'nullable|exists:users,id',
-                'response' => 'nullable|string',
             ];
 
             // Aplicar reglas de archivo solo si se está subiendo uno
@@ -118,7 +117,7 @@ class TicketController extends Controller
             $validatedData = $request->validate($rules);
 
             // Preparar datos para actualización
-            $data = $request->only(['title', 'description', 'priority', 'status', 'assigned_to', 'response']);
+            $data = $request->only(['title', 'description', 'priority', 'status', 'assigned_to']);
             
             // Manejar archivo adjunto
             if ($request->hasFile('file')) {
@@ -167,12 +166,14 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
+        $ticket->load(['messages.user']); // carga mensajes con datos de usuario
         return view('tickets.show', compact('ticket'));
+        // return view('tickets.show', compact('ticket'));
     }
 
     public function edit(Ticket $ticket)
     {
-        $staff = User::where('is_admin', true)->get();
+        $staff = User::whereIn('is_admin', [1, 2])->get();
         return view('tickets.edit', compact('ticket', 'staff'));
     }
 

@@ -20,9 +20,13 @@ class Ticket extends Model
         'priority',
         'user_id',
         'assigned_to',
-        'response',
         'file'
     ];
+
+    public function messages()
+    {
+        return $this->hasMany(TicketMessage::class);
+    }
 
     // Agrega este accessor para el tiempo transcurrido
     public function getElapsedTimeAttribute()

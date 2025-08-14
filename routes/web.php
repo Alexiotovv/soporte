@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PublicRegisterController;
+use App\Http\Controllers\TicketMessageController;
+use App\Models\Ticket;
+use Illuminate\Support\Facades\Response;
+use Carbon\Carbon; 
+
 // Authentication Routes...
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -25,6 +30,10 @@ Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController
 Route::get('/registro', [PublicRegisterController::class, 'showForm'])->name('public.register.form');
 Route::post('/registro', [PublicRegisterController::class, 'register'])->name('public.register');
 
+
+Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'store'])
+    ->name('tickets.messages.store')
+    ->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     // Tickets routes
@@ -58,3 +67,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/', function () {
     return redirect()->route('tickets.index');
 });
+
+// Route::get('/ticketes/ultimo', function () {
+//     $ultimo = \App\Models\Ticket::latest()->first();
+//     return response()->json($ultimo);
+// });
