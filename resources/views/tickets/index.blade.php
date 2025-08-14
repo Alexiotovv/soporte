@@ -34,7 +34,9 @@
 
     <div id="sse-data" style="font-family: monospace; margin: 20px;"></div>
 
-
+    <div id="alerta-ticket" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display:none;">
+        <!-- Aquí se insertará el contenido del alert -->
+    </div>
     <div class="card">
         <div class="card-body">
             <table class="table table-hover" id="tickets">
@@ -117,29 +119,118 @@
 @endsection
 
 @section('scripts')
+    <script>
+        $(document).ready(function() {
+            // Objeto para rastrear los tickets ya mostrados
+            let ticketsMostrados = {};
+
+            function verificarTickets() {
+                $.get('/tickets/ultimo', function(data) {
+                    // Si es un array de tickets (para compatibilidad con ambas versiones)
+                    const tickets = Array.isArray(data) ? data : (data.id ? [data] : []);
+                    
+                    tickets.forEach(ticket => {
+                        // Si el ticket no ha sido mostrado aún
+                        if (ticket.id && !ticketsMostrados[ticket.id]) {
+                            ticketsMostrados[ticket.id] = true;
+                            mostrarAlerta(ticket);
+                        }
+                    });
+                });
+            }
+
+            function mostrarAlerta(ticket) {
+                let html = `
+                    <div class="alert alert-warning alert-dismissible fade show shadow-lg mb-3" role="alert" style="z-index: 9999;" data-ticket-id="${ticket.id}">
+                        <div class="alert-header d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="mb-0">🚨 Ticket Abierto</h4>
+                            <button type="button" class="btn-close" onclick="cerrarAlerta(${ticket.id}, $(this).closest('.alert'));"></button>
+                        </div>
+                        <div class="alert-body">
+                            <p><strong>N° Ticket:</strong> ${ticket.id}</p>
+                            <p><strong>Usuario:</strong> ${ticket.user ? ticket.user.name : 'Desconocido'}</p>
+                            <p><strong>Descripción:</strong> ${ticket.description}</p>
+                        </div>
+                        <div class="alert-footer mt-3 text-end">
+                            <button class="btn btn-success btn-sm" onclick="cerrarAlerta(${ticket.id}, $(this).closest('.alert'));">Aceptar</button>
+                        </div>
+                    </div>
+                `;
+
+                $('#alerta-ticket').prepend(html).fadeIn();
+            }
+        
+            window.cerrarAlerta = function(ticketId, alertElement) {
+                $.post(`/tickets/marcar-visto/${ticketId}`, {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'POST'
+                }, function() {
+                    alertElement.fadeOut(function() {
+                        $(this).remove();
+                    });
+                    // Opcional: eliminar del objeto de tickets mostrados si quieres que pueda reaparecer
+                    // delete ticketsMostrados[ticketId];
+                }).fail(function() {
+                    alert('Error al actualizar el ticket');
+                });
+            }
+
+            // Ejecutar cada 5 segundos
+            const userRole = {{ auth()->user()->is_admin }};
+            if (userRole === 1 || userRole === 2) {
+                setInterval(verificarTickets, 5000);
+                // Ejecutar inmediatamente al cargar la página
+                verificarTickets();
+            }
+        });
+    </script>
     {{-- <script>
         $(document).ready(function() {
-
+            
             let ultimoTicketId = null;
 
             function verificarTickets() {
-                $.get('/ticketes/ultimo', function(data) {
-                    if (data) {
-                        if (ultimoTicketId === null) {
-                            // Primera vez que carga
+                $.get('/tickets/ultimo', function(data) {
+                    if (data.id) {
+                        if (ultimoTicketId !== data.id) {
                             ultimoTicketId = data.id;
-                        } else if (data.id !== ultimoTicketId) {
-                            // Hay un nuevo ticket
-                            ultimoTicketId = data.id;
-                            alert('¡Nuevo ticket abierto! #' + data.id);
+                            mostrarAlerta(data);
                         }
                     }
                 });
             }
+            function mostrarAlerta(ticket) {
+                let html = `
+                    <div class="alert alert-warning alert-dismissible fade show shadow-lg mb-3" role="alert" style="z-index: 9999;">
+                        <div class="alert-header d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="mb-0">🚨 Ticket Abierto</h4>
+                            <button type="button" class="btn-close" onclick="$(this).closest('.alert').remove();"></button>
+                        </div>
+                        <div class="alert-body">
+                            <p><strong>N° Ticket:</strong> ${ticket.id}</p>
+                            <p><strong>Usuario:</strong> ${ticket.user ? ticket.user.name : 'Desconocido'}</p>
+                            <p><strong>Descripción:</strong> ${ticket.description}</p>
+                        </div>
+                        <div class="alert-footer mt-3 text-end">
+                            <button class="btn btn-success btn-sm" onclick="$(this).closest('.alert').remove();">Aceptar</button>
+                        </div>
+                    </div>
+                `;
+
+                $('#alerta-ticket').prepend(html).fadeIn(); // prepend para que el más nuevo quede arriba
+            }
+           
+            window.cerrarAlerta = function(id) {
+                $.post(`/tickets/marcar-visto/${id}`, {_token: '{{ csrf_token() }}'}, function() {
+                    $('#alerta-ticket').fadeOut();
+                });
+            }
 
             // Ejecutar cada 10 segundos
-            setInterval(verificarTickets, 10000);
-
+            const userRole = {{ auth()->user()->is_admin }};
+            if (userRole === 1 || userRole === 2) {
+                setInterval(verificarTickets, 5000);
+            }
         });
     </script> --}}
 

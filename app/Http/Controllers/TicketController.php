@@ -182,4 +182,24 @@ class TicketController extends Controller
         $ticket->delete();
         return redirect()->route('tickets.index')->with('success', 'Ticket eliminado satisfactoriamente.');
     }
+
+     public function ultimo()
+    {
+        $tickets = Ticket::where('alerta', 0)
+            ->with('user')
+            ->get();
+
+        return response()->json($tickets);
+    }
+
+    // Marcar ticket como visto (alert = 1)
+    public function marcarVisto($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->alerta = 1;
+        $ticket->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }
