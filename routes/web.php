@@ -10,32 +10,120 @@ use App\Http\Controllers\TicketMessageController;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Response;
 use Carbon\Carbon; 
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Password;
+
+// Verificación de email
+Auth::routes(['verify' => true]);
+
 
 // Authentication Routes...
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
 Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+ 
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+ 
+    return $status === Password::ResetLinkSent
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function (User $user, string $password) {
+            $user->forceFill([
+                'password' => Hash::make($password),
+                'remember_token' => Str::random(60),
+            ])->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
+
+
+
+
+
 // Registration Routes...
 // Route::get('register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 // Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-// Password Reset Routes...
-// Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-// Route::post('password/email', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-// Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-// Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+// // Solicitar enlace
+// Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+//     ->name('password.request');
+// Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+//     ->name('password.email');
+
+// // Resetear contraseña
+// Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
+//     ->name('password.reset');
+// Route::post('reset-password', [ResetPasswordController::class, 'reset'])
+//     ->name('password.update');
+
 
 //Registro Público
 Route::get('/registro', [PublicRegisterController::class, 'showForm'])->name('public.register.form');
 Route::post('/registro', [PublicRegisterController::class, 'register'])->name('public.register');
+
+// ✅ Rutas de verificación de email
+Auth::routes(['verify' => true]);
+
+// O si no usas Auth::routes, puedes declararlas manualmente:
+
+// Mostrar aviso después de registrarse
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// Verificar email desde el enlace
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/login'); // o la ruta que quieras después de verificar
+})->middleware(['auth','signed'])->name('verification.verify');
+
+// Reenviar enlace de verificación
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Se envió un nuevo enlace de verificación a tu correo.');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
 
 
 Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'store'])
     ->name('tickets.messages.store')
     ->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified'])->group(function () {
     // Tickets routes
     Route::get('/tickets/ultimo', [TicketController::class, 'ultimo']);
     Route::post('/tickets/marcar-visto/{id}', [TicketController::class, 'marcarVisto']);

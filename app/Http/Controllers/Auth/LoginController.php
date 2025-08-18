@@ -24,12 +24,19 @@ class LoginController extends Controller
         // Intentar login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            $user = Auth::user();
 
+            // if (is_null($user->email_verified_at)) {
+            //     Auth::logout();
+            //     return redirect()->route('login')->withErrors([
+            //         'email' => 'Debes verificar tu correo electrónico antes de poder iniciar sesión.'
+            //     ]);
+            // }
             // Verificar status del usuario
             if (Auth::user()->status != 1) {
                 Auth::logout();
                 return redirect()->route('login')->withErrors([
-                    'email' => 'Tu cuenta aún no ha sido aprobada.'
+                    'email' => 'Tu cuenta aún no ha sido aprobada, solicita a la oficina por favor.'
                 ]);
             }
 
