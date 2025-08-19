@@ -116,11 +116,21 @@
         </div>
     </div>
 </div>
+
+
+<audio id="myAudio">
+        <source src="{{ asset('storage/ticket_sound/tono_1.mp3') }}" type="audio/mp3">
+</audio>
+
 @endsection
 
 @section('scripts')
     <script>
         $(document).ready(function() {
+            function reproducirSonido() {
+                var audio = document.getElementById("myAudio");
+                audio.play();
+            }
             // Objeto para rastrear los tickets ya mostrados
             let ticketsMostrados = {};
 
@@ -133,10 +143,23 @@
                         // Si el ticket no ha sido mostrado aún
                         if (ticket.id && !ticketsMostrados[ticket.id]) {
                             ticketsMostrados[ticket.id] = true;
+                            reproducirSonido();
                             mostrarAlerta(ticket);
+                            setTimeout(function() {
+                                vozAlerta(ticket.user.name +" necesita apoyo.");
+                            },3000);
+
                         }
                     });
                 });
+            }
+
+            function vozAlerta(texto) {
+                var synthesis = new SpeechSynthesisUtterance(texto);
+                synthesis.lang = 'es-EN';
+                synthesis.rate = 1; // Velocidad normal
+                synthesis.pitch = 1.0; // Tono normal
+                window.speechSynthesis.speak(synthesis);
             }
 
             function mostrarAlerta(ticket) {
@@ -177,62 +200,14 @@
 
             // Ejecutar cada 5 segundos
             const userRole = {{ auth()->user()->is_admin }};
-            if (userRole === 1 || userRole === 2) {
-                setInterval(verificarTickets, 5000);
-                // Ejecutar inmediatamente al cargar la página
-                verificarTickets();
-            }
-        });
+                if (userRole === 1 || userRole === 2) {
+                    setInterval(verificarTickets, 5000);
+                    // Ejecutar inmediatamente al cargar la página
+                    verificarTickets();
+                }
+            });
     </script>
-    {{-- <script>
-        $(document).ready(function() {
-            
-            let ultimoTicketId = null;
-
-            function verificarTickets() {
-                $.get('/tickets/ultimo', function(data) {
-                    if (data.id) {
-                        if (ultimoTicketId !== data.id) {
-                            ultimoTicketId = data.id;
-                            mostrarAlerta(data);
-                        }
-                    }
-                });
-            }
-            function mostrarAlerta(ticket) {
-                let html = `
-                    <div class="alert alert-warning alert-dismissible fade show shadow-lg mb-3" role="alert" style="z-index: 9999;">
-                        <div class="alert-header d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="mb-0">🚨 Ticket Abierto</h4>
-                            <button type="button" class="btn-close" onclick="$(this).closest('.alert').remove();"></button>
-                        </div>
-                        <div class="alert-body">
-                            <p><strong>N° Ticket:</strong> ${ticket.id}</p>
-                            <p><strong>Usuario:</strong> ${ticket.user ? ticket.user.name : 'Desconocido'}</p>
-                            <p><strong>Descripción:</strong> ${ticket.description}</p>
-                        </div>
-                        <div class="alert-footer mt-3 text-end">
-                            <button class="btn btn-success btn-sm" onclick="$(this).closest('.alert').remove();">Aceptar</button>
-                        </div>
-                    </div>
-                `;
-
-                $('#alerta-ticket').prepend(html).fadeIn(); // prepend para que el más nuevo quede arriba
-            }
-           
-            window.cerrarAlerta = function(id) {
-                $.post(`/tickets/marcar-visto/${id}`, {_token: '{{ csrf_token() }}'}, function() {
-                    $('#alerta-ticket').fadeOut();
-                });
-            }
-
-            // Ejecutar cada 10 segundos
-            const userRole = {{ auth()->user()->is_admin }};
-            if (userRole === 1 || userRole === 2) {
-                setInterval(verificarTickets, 5000);
-            }
-        });
-    </script> --}}
+    
 
    <script>
         $(document).ready(function () {
