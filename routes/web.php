@@ -71,25 +71,6 @@ Route::post('/reset-password', function (Request $request) {
 
 
 
-
-
-// Registration Routes...
-// Route::get('register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-// Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
-
-// // Solicitar enlace
-// Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
-//     ->name('password.request');
-// Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-//     ->name('password.email');
-
-// // Resetear contraseña
-// Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
-//     ->name('password.reset');
-// Route::post('reset-password', [ResetPasswordController::class, 'reset'])
-//     ->name('password.update');
-
-
 //Registro Público
 Route::get('/registro', [PublicRegisterController::class, 'showForm'])->name('public.register.form');
 Route::post('/registro', [PublicRegisterController::class, 'register'])->name('public.register');
@@ -154,6 +135,8 @@ Route::middleware(['auth','verified'])->group(function () {
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/', function () {
-    return redirect()->route('tickets.index');
-});
+// Route::get('/', function () {
+//     return redirect()->route('tickets.index');
+// });
+Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
