@@ -41,7 +41,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Support System</a>
+             <a class="navbar-brand" href="{{ url('/') }}">Sistema Soporte</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -53,6 +53,10 @@
                         <a class="nav-link" href="{{ route('tickets.index') }}">Mis Tickets</a>
                     </li>
                     @if(auth()->user()->is_admin==1)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
+                        </li>
+             
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.users.index') }}">Usuarios</a>
                         </li>

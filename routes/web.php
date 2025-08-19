@@ -135,8 +135,8 @@ Route::middleware(['auth','verified'])->group(function () {
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// Route::get('/', function () {
-//     return redirect()->route('tickets.index');
-// });
-Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', function () {
+    return redirect()->route('tickets.index');
+});
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 

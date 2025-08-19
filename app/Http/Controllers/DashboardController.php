@@ -41,13 +41,17 @@ class DashboardController extends Controller
         $week = Ticket::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
         $month = Ticket::whereMonth('created_at', Carbon::now()->month)->count();
 
-        return view('dashboard', compact(
-            'ticketsByStatus',
-            'ticketsByPriority',
-            'ticketsByUser',
-            'today',
-            'week',
-            'month'
-        ));
+        return view('dashboard', [
+            'ticketsByStatus' => $ticketsByStatus,
+            'ticketsByPriority' => $ticketsByPriority,
+            'ticketsByUser' => $ticketsByUser,
+            'today' => $today,
+            'week' => $week,
+            'month' => $month,
+            'breadcrumbs' => [
+                'Dashboard' => route('dashboard'),
+            ]
+        ]);
+
     }
 }

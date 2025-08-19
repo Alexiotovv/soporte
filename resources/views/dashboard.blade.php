@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+
+@include('partials.breadcrumbs', ['breadcrumbs' => $breadcrumbs ?? []])
+
 <div class="container">
     <h2 class="mb-4">Panel de Estadísticas</h2>
 
