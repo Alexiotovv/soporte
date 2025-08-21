@@ -44,12 +44,12 @@
                     <tr>
                         <th>ID</th>
                         <th>Título</th>
-                        <th>Status</th>
+                        <th>Estado</th>
                         <th>Prioridad</th>
                         <th>Fecha Solicitud</th>
                         <th>Tiempo Transcurrido</th>
                         @if(auth()->user()->is_admin)
-                            <th>User</th>
+                            <th>Usuario</th>
                             <th>Asignado A</th>
                         @endif
                         <th>Archivo</th>
@@ -63,20 +63,20 @@
                         <td>{{ $ticket->title }}</td>
                         <td>
                             @if ($ticket->status == 'open')
-                                <span class="badge bg-warning">{{$ticket->status}}</span>
+                                <span class="badge bg-warning">abierto</span>
                             @elseif ($ticket->status == 'in_progress')
-                                <span class="badge bg-primary">{{$ticket->status}}</span>
+                                <span class="badge bg-primary">en progreso</span>
                             @else
-                                <span class="badge bg-secondary">{{$ticket->status}}</span>
+                                <span class="badge bg-secondary">cerrado</span>
                             @endif
                         </td>
                         <td>
                             @if ($ticket->priority == 'low')
-                                <span class="badge bg-info">{{$ticket->priority}}</span>
+                                <span class="badge bg-info">bajo</span>
                             @elseif ($ticket->priority == 'medium')
-                                <span class="badge bg-warning text-dark">{{$ticket->priority}}</span>
+                                <span class="badge bg-warning text-dark">medio</span>
                             @elseif ($ticket->priority == 'high')
-                                <span class="badge bg-danger">{{$ticket->priority}}</span>
+                                <span class="badge bg-danger">alto</span>
                             @endif
                         </td>
                         <td>{{ $ticket->formatted_date }}</td>
