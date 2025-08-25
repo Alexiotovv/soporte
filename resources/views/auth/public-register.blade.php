@@ -61,7 +61,7 @@
                             <input type="password" name="password_confirmation" class="form-control" required>
                         </div>
                         <br>
-                        {{-- <div class="h-captcha" data-sitekey="5b3aba5a-6552-43c2-a2fc-93bab6928fec"></div> --}}
+                        <div class="h-captcha" data-sitekey="5b3aba5a-6552-43c2-a2fc-93bab6928fec"></div>
                         <br>
                         <button type="submit" class="btn btn-primary btn-sm">Registrarme</button>
                         <a href="{{ route('login') }}" class="btn btn-link">Ya tengo cuenta</a>
