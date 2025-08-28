@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('css')
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.css"
+    />
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -109,4 +116,59 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/jodit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/plugins/emoji/emoji.min.js"></script>
+    
+    <script>
+    
+
+    // Botón personalizado 😀
+    // Lista de emojis que quieras mostrar
+        const emojiList = [
+            "😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇",
+            "🙂","🙃","😉","😍","🥰","😘","😗","😙","😚","😋",
+            "😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤨","😐",
+            "😑","😶","😏","😒","🙄","😬","🤥","😌","😔","😪",
+            "🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶"
+        ];
+
+        // Definir botón de emojis en la toolbar
+    Jodit.defaultOptions.controls.emojiPicker = {
+            name: 'emojiPicker',
+            tooltip: 'Insertar Emoji',
+            template: function () {
+                return '😊'; // el icono que se verá en la toolbar
+            },
+            popup: function (editor) {
+                // Crear contenedor del popup
+                const div = editor.create.fromHTML('<div style="max-height:200px;overflow:auto;padding:5px;"></div>');
+
+                // Crear cada emoji como un span clickeable
+                emojiList.forEach(e => {
+                    const span = editor.create.fromHTML(`<span style="font-size:22px;cursor:pointer;padding:3px;">${e}</span>`);
+                    span.addEventListener('click', () => {
+                        editor.selection.insertHTML(e);
+                        editor.events.fire('closePopup'); // cerrar popup al elegir
+                    });
+                    div.appendChild(span);
+                });
+
+                return div;
+            }
+    };
+   
+    // Inicializar editor
+    var editor = new Jodit('#description', {
+        width: '100%',
+        height: 500,
+        buttons: 'bold,italic,ul,ol,emojiPicker'
+    });
+    
+    
+    </script>
 @endsection

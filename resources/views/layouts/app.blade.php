@@ -37,6 +37,7 @@
             background-color: #dc3545;
         }
     </style>
+    @yield('css')
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
