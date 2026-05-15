@@ -1,20 +1,20 @@
 <?php
+
 return [
     'attributes' => [
-        'email' => 'Correo Electrónico',
-        'password' => 'Contraseña',
-        'login' => 'Iniciar Sesión',
+        'email' => 'Correo Electronico',
+        'password' => 'Contrasena',
+        'login' => 'Iniciar Sesion',
         'rememberme' => 'Recordar credenciales',
-        // Agrega más campos según necesites
     ],
-    
-    // Mensajes de validación estándar
+
+    // Mensajes de validacion estandar
     'accepted' => 'El campo :attribute debe ser aceptado.',
     'required' => 'El campo :attribute es obligatorio.',
-    
+
     'custom' => [
         'password' => [
-            'regex' => 'La contraseña debe tener al menos una letra, un número y un símbolo.',
+            'regex' => 'La contrasena debe tener al menos una letra, un numero y un simbolo.',
         ],
     ],
     'min' => [
