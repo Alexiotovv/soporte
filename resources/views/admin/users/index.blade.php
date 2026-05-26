@@ -35,12 +35,12 @@
                         <td>{{ $user->phone ?? 'N/A' }}</td>
                         <td>{{ $user->office->name ?? 'Sin oficina' }}</td>
                         <td>
-                            @if ($user->is_admin == 1)
+                            @if ($user->is_admin == \App\Models\User::ROLE_ADMIN)
                                 <span class="badge bg-info text-dark">Administrator</span>
-                            @elseif($user->is_admin == 2)
+                            @elseif($user->is_admin == \App\Models\User::ROLE_SUPPORT)
                                 <span class="badge bg-light text-dark">Support Team</span>
                             @else
-                                <span class="badge bg-light text-dark">Regular User</span>
+                                <span class="badge bg-light text-dark">{{ $user->role_label }}</span>
                             @endif
                         </td>
                         <td>

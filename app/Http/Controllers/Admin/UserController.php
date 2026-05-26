@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Office;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -20,7 +21,9 @@ class UserController extends Controller
     public function create()
     {
         $offices = Office::all();
-        return view('admin.users.create', compact('offices'));
+        $roles = User::roleOptions();
+
+        return view('admin.users.create', compact('offices', 'roles'));
     }
 
     public function store(Request $request)
@@ -30,7 +33,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:5|confirmed',
-            'role' => 'required|in:0,1,2', 
+            'role' => ['required', Rule::in(array_keys(User::roleOptions()))],
             'phone' => 'nullable|string|max:20', // Validación para teléfono
             'office_id' => 'nullable|exists:offices,id', // Validación para oficina
             'status'=>'required|in:0,1'
@@ -51,7 +54,9 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $offices = Office::all();
-        return view('admin.users.edit', compact('user','offices'));
+        $roles = User::roleOptions();
+
+        return view('admin.users.edit', compact('user', 'offices', 'roles'));
     }
 
     public function update(Request $request, User $user)
@@ -61,7 +66,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:0,1,2',
+            'role' => ['required', Rule::in(array_keys(User::roleOptions()))],
             'phone' => 'nullable|string|max:20', // Validación para teléfono
             'office_id' => 'nullable|exists:offices,id', // Validación para oficina
             'status'=>'required|in:0,1'

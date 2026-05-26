@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PublicRegisterController;
+use App\Http\Controllers\Admin\BrandingSettingController;
 use App\Http\Controllers\TicketMessageController;
+use App\Http\Controllers\SupportLocationController;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Response;
 use Carbon\Carbon; 
@@ -105,6 +107,20 @@ Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'stor
     ->middleware('auth');
 
 Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/soporte/ubicacion', [SupportLocationController::class, 'supportPanel'])
+        ->name('support.location.panel');
+    Route::put('/soporte/ubicacion/sharing', [SupportLocationController::class, 'setSharing'])
+        ->name('support.location.sharing');
+    Route::post('/soporte/ubicacion/update', [SupportLocationController::class, 'updateCoordinates'])
+        ->name('support.location.update');
+
+    Route::get('/admin/support-locations', [SupportLocationController::class, 'adminIndex'])
+        ->name('admin.support.locations.index');
+    Route::get('/admin/support-locations/data', [SupportLocationController::class, 'adminData'])
+        ->name('admin.support.locations.data');
+    Route::get('/admin/support-locations/{user}/history', [SupportLocationController::class, 'adminHistory'])
+        ->name('admin.support.locations.history');
+
     // Tickets routes
     Route::get('/tickets/ultimo', [TicketController::class, 'ultimo']);
     Route::post('/tickets/marcar-visto/{id}', [TicketController::class, 'marcarVisto']);
@@ -112,6 +128,11 @@ Route::middleware(['auth','verified'])->group(function () {
 
     // Admin routes
     Route::prefix('admin')->group(function () {
+        Route::get('settings/branding', [BrandingSettingController::class, 'edit'])
+            ->name('admin.settings.branding.edit');
+        Route::put('settings/branding', [BrandingSettingController::class, 'update'])
+            ->name('admin.settings.branding.update');
+
         Route::resource('users', UserController::class)->names([
             'index'   => 'admin.users.index',
             'create'  => 'admin.users.create',

@@ -4,6 +4,19 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            @if($brandingSetting && $brandingSetting->login_image_url)
+                <div class="card mb-3">
+                    <div class="card-body p-2">
+                        <img
+                            src="{{ $brandingSetting->login_image_url }}"
+                            alt="Imagen de acceso"
+                            class="img-fluid rounded"
+                            style="width: 100%; max-height: 260px; object-fit: cover;"
+                        >
+                    </div>
+                </div>
+            @endif
+
             <div class="card">
                 <div class="card-header">{{ trans('validation.attributes.login') }} </div>
 

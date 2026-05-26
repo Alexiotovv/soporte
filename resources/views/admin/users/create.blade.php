@@ -80,9 +80,11 @@
                         <div class="form-group">
                             <label for="role">User Role</label>
                             <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
-                                <option value="0" {{ old('role') == 0 ? 'selected' : '' }}>Regular User</option>
-                                <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Support Team</option>
-                                <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Administrator</option>
+                                @foreach($roles as $roleValue => $roleLabel)
+                                    <option value="{{ $roleValue }}" {{ (string) old('role', \App\Models\User::ROLE_REGULAR) === (string) $roleValue ? 'selected' : '' }}>
+                                        {{ $roleLabel }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('role')
                                 <span class="invalid-feedback" role="alert">
