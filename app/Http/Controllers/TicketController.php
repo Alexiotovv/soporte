@@ -166,7 +166,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
-        $ticket->load(['messages.user']); // carga mensajes con datos de usuario
+        $ticket->load(['messages.user', 'supportReport']); // carga mensajes e informe tecnico
         return view('tickets.show', compact('ticket'));
         // return view('tickets.show', compact('ticket'));
     }

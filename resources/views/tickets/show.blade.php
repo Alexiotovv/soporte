@@ -47,6 +47,18 @@
                         @can('update', $ticket)
                         <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-light btn-sm">✏️ Edit</a>
                         @endcan
+
+                        @if(auth()->check() && auth()->user()->isSupportUser() && (int) $ticket->assigned_to === (int) auth()->id())
+                            @if($ticket->supportReport)
+                                <a href="{{ route('support-reports.edit', $ticket->supportReport) }}" class="btn btn-light btn-sm">📝 Editar Informe</a>
+                            @else
+                                <a href="{{ route('support-reports.create', $ticket) }}" class="btn btn-light btn-sm">🧾 Crear Informe</a>
+                            @endif
+                        @endif
+
+                        @if($ticket->supportReport)
+                            <a href="{{ route('support-reports.show', $ticket->supportReport) }}" class="btn btn-light btn-sm">🖨️ Ver / Reimprimir Informe</a>
+                        @endif
                     </div>
                 </div>
             </div>

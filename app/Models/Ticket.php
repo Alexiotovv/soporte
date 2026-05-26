@@ -28,6 +28,11 @@ class Ticket extends Model
         return $this->hasMany(TicketMessage::class);
     }
 
+    public function supportReport()
+    {
+        return $this->hasOne(SupportReport::class);
+    }
+
     // Agrega este accessor para el tiempo transcurrido
     public function getElapsedTimeAttribute()
     {

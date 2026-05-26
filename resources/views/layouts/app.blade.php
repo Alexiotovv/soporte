@@ -319,6 +319,9 @@
                             <a class="nav-link" href="{{ route('admin.settings.branding.edit') }}">Configuracion</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.settings.support-reports.edit') }}">Config. Informes</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.support.locations.index') }}">Mapa Soporte</a>
                         </li>
                     @elseif(auth()->user()->is_admin==2)

@@ -12,6 +12,7 @@ use App\Notifications\CustomVerifyEmail;
 use App\Notifications\CustomResetPassword;
 use App\Models\UserLocation;
 use App\Models\UserLocationLog;
+use App\Models\SupportReport;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -74,6 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function locationLogs()
     {
         return $this->hasMany(UserLocationLog::class);
+    }
+
+    public function supportReports()
+    {
+        return $this->hasMany(SupportReport::class);
     }
 
     public static function roleOptions(): array

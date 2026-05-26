@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PublicRegisterController;
 use App\Http\Controllers\Admin\BrandingSettingController;
+use App\Http\Controllers\Admin\SupportReportSettingController;
 use App\Http\Controllers\TicketMessageController;
 use App\Http\Controllers\SupportLocationController;
+use App\Http\Controllers\SupportReportController;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Response;
 use Carbon\Carbon; 
@@ -107,6 +109,19 @@ Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'stor
     ->middleware('auth');
 
 Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/tickets/{ticket}/support-report/create', [SupportReportController::class, 'create'])
+        ->name('support-reports.create');
+    Route::post('/tickets/{ticket}/support-report', [SupportReportController::class, 'store'])
+        ->name('support-reports.store');
+    Route::post('/support-reports/media/upload', [SupportReportController::class, 'uploadMedia'])
+        ->name('support-reports.media.upload');
+    Route::get('/support-reports/{supportReport}/edit', [SupportReportController::class, 'edit'])
+        ->name('support-reports.edit');
+    Route::put('/support-reports/{supportReport}', [SupportReportController::class, 'update'])
+        ->name('support-reports.update');
+    Route::get('/support-reports/{supportReport}', [SupportReportController::class, 'show'])
+        ->name('support-reports.show');
+
     Route::get('/soporte/ubicacion', [SupportLocationController::class, 'supportPanel'])
         ->name('support.location.panel');
     Route::put('/soporte/ubicacion/sharing', [SupportLocationController::class, 'setSharing'])
@@ -132,6 +147,11 @@ Route::middleware(['auth','verified'])->group(function () {
             ->name('admin.settings.branding.edit');
         Route::put('settings/branding', [BrandingSettingController::class, 'update'])
             ->name('admin.settings.branding.update');
+
+        Route::get('settings/support-reports', [SupportReportSettingController::class, 'edit'])
+            ->name('admin.settings.support-reports.edit');
+        Route::put('settings/support-reports', [SupportReportSettingController::class, 'update'])
+            ->name('admin.settings.support-reports.update');
 
         Route::resource('users', UserController::class)->names([
             'index'   => 'admin.users.index',
