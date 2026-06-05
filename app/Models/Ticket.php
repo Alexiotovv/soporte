@@ -18,6 +18,7 @@ class Ticket extends Model
         'description',
         'status',
         'priority',
+        'category_id',
         'user_id',
         'assigned_to',
         'file'
@@ -54,6 +55,11 @@ class Ticket extends Model
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(TicketCategory::class, 'category_id');
     }
 
     public function getFileUrlAttribute()

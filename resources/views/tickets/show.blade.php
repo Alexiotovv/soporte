@@ -27,6 +27,16 @@
                         </span>
                     </div>                    
                     <div class="mb-3">
+                        <strong>Categoria:</strong>
+                        @if($ticket->category)
+                            <span class="badge" style="background-color: {{ $ticket->category->color }}; color: #fff;">
+                                {{ $ticket->category->name }}
+                            </span>
+                        @else
+                            <span class="text-muted">Sin categoria</span>
+                        @endif
+                    </div>
+                    <div class="mb-3">
                         <strong>Fecha Solicitud:</strong> {{ $ticket->formatted_date }} hrs.
                     </div>
                     <div class="mb-3">

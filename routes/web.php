@@ -147,6 +147,10 @@ Route::middleware(['auth','verified'])->group(function () {
             ->name('admin.settings.branding.edit');
         Route::put('settings/branding', [BrandingSettingController::class, 'update'])
             ->name('admin.settings.branding.update');
+        Route::post('settings/ticket-categories', [BrandingSettingController::class, 'storeCategory'])
+            ->name('admin.settings.ticket-categories.store');
+        Route::delete('settings/ticket-categories/{ticketCategory}', [BrandingSettingController::class, 'destroyCategory'])
+            ->name('admin.settings.ticket-categories.destroy');
 
         Route::get('settings/support-reports', [SupportReportSettingController::class, 'edit'])
             ->name('admin.settings.support-reports.edit');

@@ -180,23 +180,25 @@
 
         .table {
             --bs-table-bg: transparent;
-            --bs-table-striped-bg: rgba(20, 81, 61, 0.03);
-            --bs-table-hover-bg: rgba(20, 81, 61, 0.08);
+            --bs-table-striped-bg: rgba(148, 163, 184, 0.06);
+            --bs-table-hover-bg: rgba(148, 163, 184, 0.12);
             color: var(--ink-900);
         }
 
         .table thead th {
-            background-color: rgba(8, 36, 28, 0.93);
-            color: #ffffff;
-            border-bottom: 0;
+            background-color: #fbfcfe;
+            color: #6b7280;
+            border-bottom: 1px solid #e6ebf2;
             font-weight: 700;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
             white-space: nowrap;
+            font-size: 0.78rem;
         }
 
         .table td,
         .table th {
-            border-color: rgba(20, 81, 61, 0.14);
+            border-color: #edf2f7;
             vertical-align: middle;
         }
 

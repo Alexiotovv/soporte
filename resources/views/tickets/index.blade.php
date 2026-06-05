@@ -1,19 +1,98 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<style>
+    .tickets-page {
+        --tp-surface: #ffffff;
+        --tp-surface-soft: #f6f8fb;
+        --tp-border: #e6ebf2;
+        --tp-text: #1f2a37;
+        --tp-muted: #6b7280;
+        --tp-accent: #0f766e;
+        --tp-accent-soft: #e8f3f2;
+    }
+
+    .tickets-page {
+        color: var(--tp-text);
+    }
+
+    .tickets-page .soft-card {
+        border: 1px solid var(--tp-border);
+        border-radius: 14px;
+        background: var(--tp-surface);
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .tickets-page .filter-wrap {
+        gap: 8px;
+    }
+
+    .tickets-page .btn-soft {
+        border: 1px solid #d9e2ec;
+        background: #f9fbfd;
+        color: #334155;
+    }
+
+    .tickets-page .table-clean {
+        margin-bottom: 0;
+    }
+
+    .tickets-page .status-pill,
+    .tickets-page .priority-pill {
+        border-radius: 999px;
+        font-weight: 600;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .tickets-page .status-open,
+    .tickets-page .priority-medium {
+        background: #ffd96a;
+        color: #5f4300;
+    }
+
+    .tickets-page .status-progress {
+        background: #b9d5ff;
+        color: #123f7a;
+    }
+
+    .tickets-page .status-closed {
+        background: #cdd7e5;
+        color: #2f3a4a;
+    }
+
+    .tickets-page .priority-low {
+        background: #b9e4ff;
+        color: #0c4660;
+    }
+
+    .tickets-page .priority-high {
+        background: #ffbcbc;
+        color: #741111;
+    }
+
+    @media (max-width: 768px) {
+        .tickets-page .filter-wrap {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+
+<div class="container-fluid px-2 px-md-3 tickets-page">
     <div class="row justify-content-between mb-4">
         <div class="col-md-6">
-            <h5>Tickets</h5>
+            <h5 class="mb-1">Tickets</h5>
+            <small class="text-muted">Listado general de solicitudes de soporte.</small>
         </div>
-        <div class="col-md-6 text-right">
-            <a href="{{ route('tickets.create') }}" class="btn btn-light btn-sm">🎫 Crear Ticket</a>
+        <div class="col-md-6 text-md-right mt-3 mt-md-0">
+            <a href="{{ route('tickets.create') }}" class="btn btn-soft btn-sm">🎫 Crear Ticket</a>
         </div>
     </div>
 
 
     <!-- Botones de filtro -->
-    <div class="btn-group mb-4" role="group">
+    <div class="btn-group mb-4 filter-wrap" role="group" aria-label="Filtros de ticket">
         <a href="{{ route('tickets.index', ['status' => 'all']) }}" 
            class="btn btn-{{ !request()->has('status') || request('status') === 'all' ? 'info' : 'outline-info' }} btn-sm">
             Todos ({{ array_sum($counts->toArray()) }})
@@ -37,13 +116,15 @@
     <div id="alerta-ticket" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display:none;">
         <!-- Aquí se insertará el contenido del alert -->
     </div>
-    <div class="card">
+    <div class="card soft-card">
         <div class="card-body">
-            <table class="table table-hover" id="tickets">
+            <div class="table-responsive">
+            <table class="table table-hover table-clean" id="tickets">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Título</th>
+                        <th>Categoria</th>
                         <th>Estado</th>
                         <th>Prioridad</th>
                         <th>Fecha Solicitud</th>
@@ -62,21 +143,30 @@
                         <td>{{ $ticket->id }}</td>
                         <td>{{ $ticket->title }}</td>
                         <td>
-                            @if ($ticket->status == 'open')
-                                <span class="badge bg-warning">abierto</span>
-                            @elseif ($ticket->status == 'in_progress')
-                                <span class="badge bg-primary">en progreso</span>
+                            @if($ticket->category)
+                                <span class="badge" style="background-color: {{ $ticket->category->color }}; color: #fff;">
+                                    {{ $ticket->category->name }}
+                                </span>
                             @else
-                                <span class="badge bg-secondary">cerrado</span>
+                                <span class="text-muted">Sin categoria</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($ticket->status == 'open')
+                                <span class="badge status-pill status-open">abierto</span>
+                            @elseif ($ticket->status == 'in_progress')
+                                <span class="badge status-pill status-progress">en progreso</span>
+                            @else
+                                <span class="badge status-pill status-closed">cerrado</span>
                             @endif
                         </td>
                         <td>
                             @if ($ticket->priority == 'low')
-                                <span class="badge bg-info">bajo</span>
+                                <span class="badge priority-pill priority-low">bajo</span>
                             @elseif ($ticket->priority == 'medium')
-                                <span class="badge bg-warning text-dark">medio</span>
+                                <span class="badge priority-pill priority-medium">medio</span>
                             @elseif ($ticket->priority == 'high')
-                                <span class="badge bg-danger">alto</span>
+                                <span class="badge priority-pill priority-high">alto</span>
                             @endif
                         </td>
                         <td>{{ $ticket->formatted_date }}</td>
@@ -87,7 +177,7 @@
                         @endif
                         <td>
                             @if($ticket->file)
-                                <a href="{{ $ticket->file_url }}" target="_blank" class="btn btn-sm btn-light">
+                                <a href="{{ $ticket->file_url }}" target="_blank" class="btn btn-sm btn-soft">
                                     📎 {{ $ticket->file_name }}
                                 </a>
                             @else
@@ -95,17 +185,17 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-sm btn-light">📋 View</a>
+                            <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-sm btn-soft">📋 Ver</a>
                             
                             @if(auth()->user()->is_admin)
-                                <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-light">✏️ Edit</a>
+                                <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-soft">✏️ Editar</a>
                             @endif
 
                             @can('delete', $ticket)
                             <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-light" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                <button type="submit" class="btn btn-sm btn-soft" onclick="return confirm('Are you sure?')">🗑️ Eliminar</button>
                             </form>
                             @endcan
                         </td>
@@ -113,6 +203,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

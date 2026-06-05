@@ -44,6 +44,31 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="category_id">Categoria</label>
+                            <select class="form-control @error('category_id') is-invalid @enderror" id="category_id" name="category_id">
+                                <option value="">Sin categoria</option>
+                                @foreach($categories as $category)
+                                    <option
+                                        value="{{ $category->id }}"
+                                        data-color="{{ $category->color }}"
+                                        {{ old('category_id', $ticket->category_id) == $category->id ? 'selected' : '' }}
+                                    >
+                                        {{ $category->name }} ({{ $category->color }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            <small class="form-text text-muted d-inline-flex align-items-center gap-2 mt-2">
+                                <span id="category-color-dot" style="width:14px;height:14px;border-radius:50%;display:inline-block;background:#d1d5db;"></span>
+                                Color de la categoria seleccionada
+                            </small>
+                        </div>
+
+                        <div class="form-group">
                             <label for="description">Descripción</label>
                             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="5" required>{{ old('description', $ticket->description) }}</textarea>
                             @error('description')
@@ -168,6 +193,20 @@
         height: 500,
         buttons: 'bold,italic,ul,ol,emojiPicker'
     });
+
+    const categorySelect = document.getElementById('category_id');
+    const categoryColorDot = document.getElementById('category-color-dot');
+
+    function updateCategoryColorDot() {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        const color = selectedOption ? selectedOption.getAttribute('data-color') : null;
+        categoryColorDot.style.background = color || '#d1d5db';
+    }
+
+    if (categorySelect) {
+        categorySelect.addEventListener('change', updateCategoryColorDot);
+        updateCategoryColorDot();
+    }
     
     
     </script>

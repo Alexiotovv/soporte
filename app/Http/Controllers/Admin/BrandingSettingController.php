@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BrandingSetting;
+use App\Models\TicketCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,8 +15,9 @@ class BrandingSettingController extends Controller
         $this->authorizeAdmin();
 
         $brandingSetting = BrandingSetting::firstOrCreate([]);
+        $ticketCategories = TicketCategory::orderBy('name')->get();
 
-        return view('admin.settings.branding', compact('brandingSetting'));
+        return view('admin.settings.branding', compact('brandingSetting', 'ticketCategories'));
     }
 
     public function update(Request $request)
@@ -60,8 +62,35 @@ class BrandingSettingController extends Controller
         $brandingSetting->save();
 
         return redirect()
-            ->route('admin.settings.branding.edit')
+            ->route('admin.settings.branding.edit', ['tab' => 'visual'])
             ->with('success', 'Configuracion visual actualizada correctamente.');
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $this->authorizeAdmin();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:120|unique:ticket_categories,name',
+            'color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]);
+
+        TicketCategory::create($validated);
+
+        return redirect()
+            ->route('admin.settings.branding.edit', ['tab' => 'tickets'])
+            ->with('success', 'Categoria de ticket registrada correctamente.');
+    }
+
+    public function destroyCategory(TicketCategory $ticketCategory)
+    {
+        $this->authorizeAdmin();
+
+        $ticketCategory->delete();
+
+        return redirect()
+            ->route('admin.settings.branding.edit', ['tab' => 'tickets'])
+            ->with('success', 'Categoria eliminada correctamente.');
     }
 
     private function authorizeAdmin(): void

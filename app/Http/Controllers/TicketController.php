@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\TicketCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +17,8 @@ class TicketController extends Controller
     
         // Base query según tipo de usuario
         $query = Auth::user()->is_admin
-            ? Ticket::with(['user', 'assignedTo'])
-            : Ticket::where('user_id', Auth::id());
+            ? Ticket::with(['user', 'assignedTo', 'category'])
+            : Ticket::with(['category'])->where('user_id', Auth::id());
         
         // Aplicar filtro de estado si no es 'all'
         if ($status && $status !== 'all') {
@@ -45,7 +46,9 @@ class TicketController extends Controller
 
     public function create()
     {
-        return view('tickets.create');
+        $categories = TicketCategory::orderBy('name')->get();
+
+        return view('tickets.create', compact('categories'));
     }
 
    public function store(Request $request)
@@ -55,10 +58,11 @@ class TicketController extends Controller
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'priority' => 'required|in:low,medium,high',
+                'category_id' => 'nullable|exists:ticket_categories,id',
                 'file' => 'sometimes|file|max:5120|mimes:jpg,jpeg,png',
             ]);
 
-            $data = $request->only(['title', 'description', 'priority']);
+            $data = $request->only(['title', 'description', 'priority', 'category_id']);
             $data['user_id'] = auth()->id();
 
             if ($request->hasFile('file')) {
@@ -104,6 +108,7 @@ class TicketController extends Controller
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'priority' => 'required|in:low,medium,high',
+                'category_id' => 'nullable|exists:ticket_categories,id',
                 'status' => 'nullable|in:open,in_progress,closed',
                 'assigned_to' => 'nullable|exists:users,id',
             ];
@@ -117,7 +122,7 @@ class TicketController extends Controller
             $validatedData = $request->validate($rules);
 
             // Preparar datos para actualización
-            $data = $request->only(['title', 'description', 'priority', 'status', 'assigned_to']);
+            $data = $request->only(['title', 'description', 'priority', 'category_id', 'status', 'assigned_to']);
             
             // Manejar archivo adjunto
             if ($request->hasFile('file')) {
@@ -166,7 +171,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
-        $ticket->load(['messages.user', 'supportReport']); // carga mensajes e informe tecnico
+        $ticket->load(['messages.user', 'supportReport', 'category']); // carga mensajes e informe tecnico
         return view('tickets.show', compact('ticket'));
         // return view('tickets.show', compact('ticket'));
     }
@@ -174,7 +179,9 @@ class TicketController extends Controller
     public function edit(Ticket $ticket)
     {
         $staff = User::whereIn('is_admin', [1, 2])->get();
-        return view('tickets.edit', compact('ticket', 'staff'));
+        $categories = TicketCategory::orderBy('name')->get();
+
+        return view('tickets.edit', compact('ticket', 'staff', 'categories'));
     }
 
     public function destroy(Ticket $ticket)
