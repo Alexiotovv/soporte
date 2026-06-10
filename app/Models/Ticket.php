@@ -37,7 +37,7 @@ class Ticket extends Model
     // Agrega este accessor para el tiempo transcurrido
     public function getElapsedTimeAttribute()
     {
-        return $this->created_at->diffForHumans();
+        return $this->created_at->locale('es')->diffForHumans();
     }
 
     // Y este para la fecha formateada
