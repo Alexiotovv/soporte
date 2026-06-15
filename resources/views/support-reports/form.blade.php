@@ -44,10 +44,9 @@
 
                         <div class="mb-3">
                             <label class="form-label">Contenido del informe</label>
-                            <div id="editor" style="min-height: 260px; background: #fff; border: 1px solid rgba(20,81,61,.25); border-radius: 10px;"></div>
-                            <textarea id="content" name="content" class="d-none">{{ old('content', $report->content ?? '') }}</textarea>
+                            <textarea id="content" name="content" class="form-control @error('content') is-invalid @enderror" rows="8" required>{{ old('content', $report->content ?? '') }}</textarea>
                             @error('content')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -67,133 +66,59 @@
 @endsection
 
 @section('css')
-    <style>
-        .tox-tinymce {
-            border-radius: 10px !important;
-            border-color: rgba(20,81,61,.25) !important;
-        }
-    </style>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.css"
+    />
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.tiny.cloud/1/3rj3ihcljdbzgjfkppqu4rn5i2vrolk8no4osondr4uyyo5e/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/jodit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/plugins/emoji/emoji.min.js"></script>
+
     <script>
-        (function () {
-            const hiddenContent = document.getElementById('content');
 
-            tinymce.init({
-                selector: '#editor',
-                height: 420,
-                menubar: false,
-                branding: false,
-                promotion: false,
-                plugins: 'link lists table image code autoresize',
-                toolbar: 'undo redo | blocks | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | table | link image | code | removeformat',
-                content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
-                images_upload_url: '{{ route('support-reports.media.upload') }}',
-                images_upload_credentials: true,
-                automatic_uploads: true,
-                file_picker_types: 'image',
-                images_reuse_filename: true,
-                file_picker_callback: function (callback, value, meta) {
-                    if (meta.filetype !== 'image') {
-                        return;
-                    }
+    // Botón personalizado 😀
+    // Lista de emojis que quieras mostrar
+        const emojiList = [
+            "😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇",
+            "🙂","🙃","😉","😍","🥰","😘","😗","😙","😚","😋",
+            "😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤨","😐",
+            "😑","😶","😏","😒","🙄","😬","🤥","😌","😔","😪",
+            "🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶"
+        ];
 
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'image/*';
+        // Definir botón de emojis en la toolbar
+        Jodit.defaultOptions.controls.emojiPicker = {
+            name: 'emojiPicker',
+            tooltip: 'Insertar Emoji',
+            template: function () {
+                return '😊'; // el icono que se verá en la toolbar
+            },
+            popup: function (editor) {
+                // Crear contenedor del popup
+                const div = editor.create.fromHTML('<div style="max-height:200px;overflow:auto;padding:5px;"></div>');
 
-                    input.onchange = function () {
-                        const file = input.files[0];
-                        if (!file) {
-                            return;
-                        }
-
-                        const formData = new FormData();
-                        formData.append('file', file);
-
-                        fetch('{{ route('support-reports.media.upload') }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: formData,
-                            credentials: 'same-origin'
-                        })
-                        .then(function (response) {
-                            if (!response.ok) {
-                                throw new Error('No se pudo subir la imagen.');
-                            }
-
-                            return response.json();
-                        })
-                        .then(function (payload) {
-                            if (!payload.location) {
-                                throw new Error('Respuesta invalida del servidor.');
-                            }
-
-                            callback(payload.location, { alt: file.name });
-                        })
-                        .catch(function (error) {
-                            alert(error.message || 'Error al subir la imagen.');
-                        });
-                    };
-
-                    input.click();
-                },
-                images_upload_handler: function (blobInfo, progress) {
-                    return new Promise(function (resolve, reject) {
-                        const formData = new FormData();
-                        formData.append('file', blobInfo.blob(), blobInfo.filename());
-
-                        fetch('{{ route('support-reports.media.upload') }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: formData,
-                            credentials: 'same-origin'
-                        })
-                        .then(function (response) {
-                            if (!response.ok) {
-                                throw new Error('No se pudo subir la imagen.');
-                            }
-
-                            return response.json();
-                        })
-                        .then(function (payload) {
-                            if (!payload.location) {
-                                throw new Error('Respuesta invalida del servidor.');
-                            }
-
-                            resolve(payload.location);
-                        })
-                        .catch(function (error) {
-                            reject(error.message || 'Error al subir la imagen.');
-                        });
+                emojiList.forEach(e => {
+                    // Crear cada emoji como un span clickeable
+                    const span = editor.create.fromHTML(`<span style="font-size:22px;cursor:pointer;padding:3px;">${e}</span>`);
+                    span.addEventListener('click', () => {
+                        editor.selection.insertHTML(e);
+                        editor.events.fire('closePopup'); // cerrar popup al elegir
                     });
-                },
-                setup: function (editor) {
-                    editor.on('init', function () {
-                        if (hiddenContent.value && hiddenContent.value.trim() !== '') {
-                            editor.setContent(hiddenContent.value);
-                        }
-                    });
+                    div.appendChild(span);
+                });
 
-                    editor.on('change keyup', function () {
-                        hiddenContent.value = editor.getContent();
-                    });
-                }
-            });
+                return div;
+            }
+        };
 
-            document.getElementById('support-report-form').addEventListener('submit', function () {
-                if (window.tinymce) {
-                    hiddenContent.value = tinymce.get('editor').getContent();
-                }
-            });
-        })();
+        // Inicializar editor
+        var editor = new Jodit('#content', {
+            width: '100%',
+            height: 500,
+            extraButtons: ['emojiPicker']
+        });
     </script>
 @endsection

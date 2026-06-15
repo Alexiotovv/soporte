@@ -142,10 +142,14 @@
     </div>
 </div>
 @endsection
-
+@section('css')
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.css"
+    />
+@endsection
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/jodit@latest/es2021/jodit.fat.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/jodit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.5/plugins/emoji/emoji.min.js"></script>
     
@@ -191,7 +195,7 @@
     var editor = new Jodit('#description', {
         width: '100%',
         height: 500,
-        buttons: 'bold,italic,ul,ol,emojiPicker'
+        extraButtons: ['emojiPicker']
     });
 
     const categorySelect = document.getElementById('category_id');
