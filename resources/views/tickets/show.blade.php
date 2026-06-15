@@ -58,7 +58,10 @@
                         <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-light btn-sm">✏️ Edit</a>
                         @endcan
 
-                        @if(auth()->check() && auth()->user()->isSupportUser() && (int) $ticket->assigned_to === (int) auth()->id())
+                        @if(auth()->check() && (
+                            auth()->user()->is_admin ||
+                            (auth()->user()->isSupportUser() && (int) $ticket->assigned_to === (int) auth()->id())
+                        ))
                             @if($ticket->supportReport)
                                 <a href="{{ route('support-reports.edit', $ticket->supportReport) }}" class="btn btn-light btn-sm">📝 Editar Informe</a>
                             @else

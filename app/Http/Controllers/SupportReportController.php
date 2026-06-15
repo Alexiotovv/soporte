@@ -134,7 +134,10 @@ class SupportReportController extends Controller
 
     public function uploadMedia(Request $request)
     {
-        abort_unless(auth()->check() && auth()->user()->isSupportUser(), 403);
+        abort_unless(
+            auth()->check() && (auth()->user()->isSupportUser() || auth()->user()->isAdminUser()),
+            403
+        );
 
         $data = $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
@@ -149,13 +152,29 @@ class SupportReportController extends Controller
 
     private function authorizeSupportTicket(Ticket $ticket): void
     {
-        abort_unless(auth()->check() && auth()->user()->isSupportUser(), 403);
+        abort_unless(
+            auth()->check() && (auth()->user()->isSupportUser() || auth()->user()->isAdminUser()),
+            403
+        );
+
+        if (auth()->user()->isAdminUser()) {
+            return;
+        }
+
         abort_unless((int) $ticket->assigned_to === (int) auth()->id(), 403);
     }
 
     private function authorizeSupportReport(SupportReport $report): void
     {
-        abort_unless(auth()->check() && auth()->user()->isSupportUser(), 403);
+        abort_unless(
+            auth()->check() && (auth()->user()->isSupportUser() || auth()->user()->isAdminUser()),
+            403
+        );
+
+        if (auth()->user()->isAdminUser()) {
+            return;
+        }
+
         abort_unless((int) $report->user_id === (int) auth()->id(), 403);
     }
 
