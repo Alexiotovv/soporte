@@ -288,6 +288,23 @@
     @yield('css')
 </head>
 <body>
+    @php
+        $conversationCount = 0;
+
+        if (Auth::check()) {
+            $conversationCount = \App\Models\Ticket::where('user_id', Auth::id())
+                ->where('alerta', 0)
+                ->with('messages')
+                ->get()
+                ->filter(function ($ticket) {
+                    return $ticket->messages->contains(function ($message) {
+                        return (int) $message->user_id !== (int) Auth::id();
+                    });
+                })
+                ->count();
+        }
+    @endphp
+
     <nav class="navbar navbar-expand-md navbar-dark app-navbar fixed-top">
         <div class="container">
              <a class="navbar-brand" href="{{ url('/') }}">
@@ -306,6 +323,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('tickets.index') }}">Mis Tickets</a>
                     </li>
+                    @if(Auth::check() && $conversationCount > 0)
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="{{ route('tickets.conversations') }}" title="Respuestas en tus conversaciones">
+                            <span aria-hidden="true">🚨</span>
+                            <span class="badge rounded-pill bg-danger">{{ $conversationCount }}</span>
+                        </a>
+                    </li>
+                    @endif
                     @if(auth()->user()->is_admin==1)
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>

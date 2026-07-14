@@ -32,6 +32,10 @@ class TicketMessageController extends Controller
 
         TicketMessage::create($data);
 
+        if ((int) $ticket->user_id !== (int) Auth::id()) {
+            $ticket->update(['alerta' => 0]);
+        }
+
         return redirect()->route('tickets.show', $ticket->id)
                          ->with('success', 'Mensaje enviado.');
     }

@@ -169,8 +169,36 @@ class TicketController extends Controller
         }
     }
 
+    public function conversations()
+    {
+        $tickets = Ticket::where('user_id', Auth::id())
+            ->with(['messages.user', 'category'])
+            ->get()
+            ->filter(function (Ticket $ticket) {
+                return $ticket->messages->contains(function ($message) {
+                    return (int) $message->user_id !== (int) Auth::id();
+                });
+            })
+            ->sortByDesc(function (Ticket $ticket) {
+                $lastReply = $ticket->messages->where('user_id', '!=', Auth::id())->sortByDesc('created_at')->first();
+
+                return $lastReply ? $lastReply->created_at : $ticket->created_at;
+            })
+            ->values();
+
+        if ($tickets->isNotEmpty()) {
+            Ticket::whereIn('id', $tickets->pluck('id'))->where('user_id', Auth::id())->update(['alerta' => 1]);
+        }
+
+        return view('tickets.conversations', compact('tickets'));
+    }
+
     public function show(Ticket $ticket)
     {
+        if ((int) $ticket->user_id === (int) Auth::id()) {
+            $ticket->update(['alerta' => 1]);
+        }
+
         $ticket->load(['messages.user', 'supportReport', 'category']); // carga mensajes e informe tecnico
         return view('tickets.show', compact('ticket'));
         // return view('tickets.show', compact('ticket'));

@@ -109,6 +109,8 @@ Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'stor
     ->middleware('auth');
 
 Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/tickets/conversations', [TicketController::class, 'conversations'])
+        ->name('tickets.conversations');
     Route::get('/tickets/{ticket}/support-report/create', [SupportReportController::class, 'create'])
         ->name('support-reports.create');
     Route::post('/tickets/{ticket}/support-report', [SupportReportController::class, 'store'])
