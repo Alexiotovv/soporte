@@ -21,7 +21,8 @@ class Ticket extends Model
         'category_id',
         'user_id',
         'assigned_to',
-        'file'
+        'file',
+        'alerta'
     ];
 
     public function messages()

@@ -293,7 +293,9 @@
 
         if (Auth::check()) {
             $conversationCount = \App\Models\Ticket::where('user_id', Auth::id())
-                ->where('alerta', 0)
+                ->where(function ($query) {
+                    $query->whereNull('alerta')->orWhere('alerta', 0);
+                })
                 ->with('messages')
                 ->get()
                 ->filter(function ($ticket) {
@@ -323,11 +325,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('tickets.index') }}">Mis Tickets</a>
                     </li>
-                    @if(Auth::check() && $conversationCount > 0)
+                    @if(Auth::check() && !auth()->user()->is_admin)
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center gap-2" href="{{ route('tickets.conversations') }}" title="Respuestas en tus conversaciones">
-                            <span aria-hidden="true">🚨</span>
-                            <span class="badge rounded-pill bg-danger">{{ $conversationCount }}</span>
+                            <span aria-hidden="true">🔔</span>
+                            @if($conversationCount > 0)
+                                <span class="badge rounded-pill bg-danger">{{ $conversationCount }}</span>
+                            @endif
                         </a>
                     </li>
                     @endif
